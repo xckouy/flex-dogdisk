@@ -7,7 +7,7 @@ public class FileItem{
 	private String extension;//后缀名
 	private String basename;//去掉后缀名
 	private String folderpath;//所属文件夹路径
-	private Long size;//文件大小
+	private Float size;//文件大小
 	private boolean ishidden;//是否是隐藏文件
 	private boolean isfolder;
 	private Date lashmodifydate;
@@ -53,10 +53,10 @@ public class FileItem{
 	public void setFolderpath(String folderpath) {
 		this.folderpath = folderpath;
 	}
-	public Long getSize() {
+	public Float getSize() {
 		return size;
 	}
-	public void setSize(Long size) {
+	public void setSize(Float size) {
 		this.size = size;
 	}
 }
