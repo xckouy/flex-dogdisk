@@ -102,10 +102,11 @@
 			{
 				
 				if(!treeSearchText.text){
-					opt.enabled = true;
-					fileTree.dataProvider = fileFolderTreeData;
-					fileTree.validateNow();
-					fileTree.expandItem(fileTree.dataProvider[0],true,true);
+//					opt.enabled = true;
+//					fileTree.dataProvider = fileFolderTreeData;
+//					fileTree.validateNow();
+//					fileTree.expandItem(fileTree.dataProvider[0],true,true);
+					loadFolderTree();
 					return;
 				}
 				opt.enabled = false;
