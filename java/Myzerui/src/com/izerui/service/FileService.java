@@ -23,7 +23,7 @@ public interface FileService {
 	 * @param path
 	 * @param isCreate
 	 */
-	public String optFolder(String path,boolean isCreate) throws Exception;
+	public String optFolder(String path,boolean isCreate) ;
 	
 	/**
 	 * 重命名文件夹
@@ -32,4 +32,17 @@ public interface FileService {
 	 * @return 新的文件夹路径
 	 */
 	public String renameFolder(String path,String FolderNewName);
+	
+	/**
+	 * 返回上一级目录
+	 * @param path
+	 * @return
+	 */
+	public String interceptPath(String path);
+	
+	/**
+	 * 返回根目录
+	 * @return
+	 */
+	public String fomatRootFilePath();
 }

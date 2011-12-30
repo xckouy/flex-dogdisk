@@ -1,12 +1,15 @@
 package com.izerui.service.impl;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +29,21 @@ public class FileServiceImpl implements FileService{
 	@Value("${filePath}")
 	private String filePath;
 	
-	public List<FileTree> getFolderList() {
+	
+	public String fomatRootFilePath(){
 		if(!filePath.endsWith(File.separator)){
 			filePath += File.separator;
 		}
+		filePath = FilenameUtils.getFullPath(filePath);
+		filePath = FilenameUtils.normalize(filePath);
+		return filePath;
+	}
+	
+	public List<FileTree> getFolderList() {
+		String rootPath = fomatRootFilePath();
 		FileTree root = new FileTree();
-		root.setFolderpath(filePath);
-		root.setFoldername(ExtendFilenameUtils.getLastFolderPathNoEndSeparator(filePath));
+		root.setFolderpath(fomatRootFilePath());
+		root.setFoldername(ExtendFilenameUtils.getLastFolderPathNoEndSeparator(rootPath));
 		root.setChildren(getChildrenFolderPaths(root));
 		
 		List<FileTree> filePathTree = new ArrayList<FileTree>();
@@ -66,7 +77,9 @@ public class FileServiceImpl implements FileService{
 	public List<FileItem> listFilesByFolder(String folderPath) {
 		List<FileItem> files = new ArrayList<FileItem>();
 		File folderFile = new File(folderPath);
-		for (File file : folderFile.listFiles()) {
+		File[] filesArray = folderFile.listFiles();
+		Arrays.sort(filesArray);
+		for (File file : filesArray) {
 			FileItem fi = new FileItem();
 			fi.setLashmodifydate(new Date(file.lastModified()));
 			if(file.isDirectory()){
@@ -89,14 +102,14 @@ public class FileServiceImpl implements FileService{
 		return files;
 	}
 
-	public String optFolder(String path,boolean isCreate) throws Exception {
+	public String optFolder(String path,boolean isCreate) throws RuntimeException {
 		path = FilenameUtils.normalize(path);
 		// TODO Auto-generated method stub
 		if(isCreate&&new File(path).mkdir()){//新建
 			return path+File.separator;
 		}else{
 			if(new File(path).list().length>0){
-				throw new Exception("文件夹不为空");
+				throw new RuntimeException("Folder is not empty");
 			}
 			new File(path).delete();
 		}
@@ -115,11 +128,25 @@ public class FileServiceImpl implements FileService{
 		
 	}
 	
-	public static void main(String[] args) {
-		FileServiceImpl imp = new FileServiceImpl();
-		imp.renameFolder("D:/data/", "data1");
+	
+	public String interceptPath(String path) throws RuntimeException {
+		path = FilenameUtils.normalize(path);
+		if(path.equals(fomatRootFilePath())){
+			throw new RuntimeException("already is the root path"); 
+		}
+		String tempPath = FilenameUtils.getFullPathNoEndSeparator(path);
+		return FilenameUtils.getFullPath(tempPath);
 	}
 	
+	
+	
+	
+	public static void main(String[] args) {
+		FileServiceImpl imp = new FileServiceImpl();
+//		imp.renameFolder("D:/data/", "data1");
+		String s = "D:/data/djf/ffff/ssjdf/";
+		System.out.println(imp.interceptPath(s));
+	}
 
 
 }
