@@ -6,7 +6,10 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.adobe.cairngorm.control.CairngormEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import com.izerui.cairngorm.event.FomatRootFilePathClassEvent;
+			import com.izerui.cairngorm.event.InterceptPathClassEvent;
 			import com.izerui.cairngorm.event.ListFilesByFolderClassEvent;
 			import com.izerui.components.loading.LoaderManager;
 			import com.izerui.event.I18nEvent;
@@ -18,14 +21,15 @@
 			import mx.collections.SortField;
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
 			import mx.events.ListEvent;
 			import mx.formatters.DateFormatter;
 			
 			private var currentPath:String;
 			
-			public function loadFiles(treeItem:FileTree):void
+			public function loadFiles(folderPathEndSeparator:String):void
 			{
-				CairngormEventDispatcher.getInstance().dispatchEvent(new ListFilesByFolderClassEvent(treeItem.folderpath,listFileResponse));
+				CairngormEventDispatcher.getInstance().dispatchEvent(new ListFilesByFolderClassEvent(folderPathEndSeparator,listFileResponse));
 				LoaderManager.showLoading(false);
 				function listFileResponse(data:ArrayCollection):void{
 					LoaderManager.hideLoading();
@@ -33,7 +37,7 @@
 					data.sort.fields =  [new SortField("isfolder",true,true)]; 
 					data.refresh();
 					myFileGrid.dataProvider = data;
-					currentPath = treeItem.folderpath;//保存当前path路径
+					currentPath = folderPathEndSeparator;//保存当前path路径
 				}
 			}
 			
@@ -42,10 +46,7 @@
 			{
 				// TODO Auto-generated method stub
 				if(myFileGrid.selectedItem.isfolder){
-					var imitationTreeVo:FileTree = new FileTree;
-					imitationTreeVo.foldername = myFileGrid.selectedItem.filename;
-					imitationTreeVo.folderpath = myFileGrid.selectedItem.folderpath;
-					this.loadFiles(imitationTreeVo);
+					this.loadFiles(myFileGrid.selectedItem.folderpath as String);
 				}
 			}
 			
@@ -66,6 +67,59 @@
 				(linkButtonBar.dataProvider as ArrayCollection).refresh();
 			}
 			
+			[Bindable]
+			[Embed(source="assets/img/bar_img/back.png")]
+			private var button1_class:Class;
+			
+			protected function linkButtonBar_itemClickHandler(event:ItemClickEvent):void
+			{
+				if(!currentPath){
+					return;
+				}
+				switch(event.item["itemData"])
+				{
+					case 0:
+					{
+						CairngormEventDispatcher.getInstance().dispatchEvent(new InterceptPathClassEvent(currentPath,returnInterceptPath));
+						break;
+					}
+					case 1:
+					{
+						CairngormEventDispatcher.getInstance().dispatchEvent(new FomatRootFilePathClassEvent(loadFiles));
+						break;
+					}
+					case 2:
+					{
+						loadFiles(currentPath);
+						break;
+					}
+					case 3:
+					{
+						
+						break;
+					}
+					case 4:
+					{
+						
+						break;
+					}
+					case 5:
+					{
+						
+						break;
+					}
+				}
+				
+				function returnInterceptPath(newCurrentPath:String):void
+				{
+					loadFiles(newCurrentPath);
+					currentPath = newCurrentPath;
+					
+				}
+				
+			}
+			
+			
 		]]>
 	</fx:Script>
 	
@@ -80,15 +134,15 @@
 		</mx:columns>
 	</mx:DataGrid>
 	<mx:ControlBar>
-		<mx:LinkBar id="linkButtonBar">
+		<mx:LinkBar id="linkButtonBar" iconField="ico" itemClick="linkButtonBar_itemClickHandler(event)">
 			<mx:dataProvider>
 				<s:ArrayCollection>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button1_label')}"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button2_label')}"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button3_label')}"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button4_label')}"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}"/>
-					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button6_label')}"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button1_label')}" itemData="0" ico="@Embed('assets/img/bar_img/back.png')" />
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button2_label')}" itemData="1" ico="@Embed('assets/img/bar_img/world.png')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button3_label')}" itemData="2" ico="@Embed('assets/img/bar_img/refresh.png')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button4_label')}" itemData="3" ico="@Embed('assets/img/bar_img/remove.png')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4" ico="@Embed('assets/img/bar_img/upload.gif')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button6_label')}" itemData="5" ico="@Embed('assets/img/bar_img/download.gif')"/>
 				</s:ArrayCollection>
 			</mx:dataProvider>
 		</mx:LinkBar>

@@ -20,7 +20,7 @@
 			
 			protected function filetreepanel1_FileTreeItemClickHandler(event:FileTreeItemClickEvent):void
 			{
-				filegrid.loadFiles(event.itemObject);
+				filegrid.loadFiles(event.itemObject["folderpath"] as String);
 				
 			}
 			
