@@ -109,7 +109,7 @@
 					loadFolderTree();
 					return;
 				}
-				opt.enabled = false;
+//				opt.enabled = false;
 				var tempSearchList:ArrayCollection = new ArrayCollection;
 				searchFolderList(fileFolderTreeData);
 				
