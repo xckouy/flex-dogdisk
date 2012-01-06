@@ -12,6 +12,8 @@
 			import com.izerui.cairngorm.event.InterceptPathClassEvent;
 			import com.izerui.cairngorm.event.ListFilesByFolderClassEvent;
 			import com.izerui.components.loading.LoaderManager;
+			import com.izerui.controls.uploader.ServletUploader;
+			import com.izerui.event.FileUploadEvent;
 			import com.izerui.event.I18nEvent;
 			import com.izerui.vo.FileItem;
 			import com.izerui.vo.FileTree;
@@ -20,10 +22,12 @@
 			import mx.collections.Sort;
 			import mx.collections.SortField;
 			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
 			import mx.events.FlexEvent;
 			import mx.events.ItemClickEvent;
 			import mx.events.ListEvent;
 			import mx.formatters.DateFormatter;
+			import mx.managers.PopUpManager;
 			
 			private var currentPath:String;
 			
@@ -100,7 +104,13 @@
 					}
 					case 4:
 					{
-						
+						var servletUploader:ServletUploader = new ServletUploader;
+						servletUploader.currentPath = currentPath;
+						PopUpManager.addPopUp(servletUploader,FlexGlobals.topLevelApplication as DisplayObjectContainer,true);
+						PopUpManager.centerPopUp(servletUploader);
+						servletUploader.addEventListener(FileUploadEvent.UPLOAD_COMPLETE,fileUploadComplete);
+//						servletUploader.multiFileUpload.addEventListener(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE,singleFileUploadFinished);
+						servletUploader.setFocus();
 						break;
 					}
 					case 5:
@@ -119,6 +129,19 @@
 				
 			}
 			
+			
+			protected function fileUploadComplete(event:FileUploadEvent):void
+			{
+				// TODO Auto-generated method stub
+				trace("上传完毕");
+				loadFiles(currentPath);
+			}
+			
+//			protected function singleFileUploadFinished(event:FileUploadEvent):void
+//			{
+//				loadFiles(currentPath);
+//				
+//			}
 			
 		]]>
 	</fx:Script>
