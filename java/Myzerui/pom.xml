@@ -201,5 +201,10 @@
 		</dependency>
 		<!-- <dependency> <groupId>org.springframework.flex</groupId> <artifactId>spring-flex-core</artifactId> 
 			<version>1.5.2.RELEASE</version> </dependency> -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.1</version>
+		</dependency>
 	</dependencies>
 </project>
