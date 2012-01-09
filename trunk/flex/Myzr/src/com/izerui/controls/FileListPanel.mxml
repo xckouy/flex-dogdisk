@@ -123,6 +123,17 @@
 						downloadFile();
 						break;
 					}
+					case 6:
+					{
+						if(myFileGrid.selectedIndex!=-1&&!myFileGrid.selectedItem["isfolder"]){
+							
+							var xlsUrl:String = "download?path="+encodeURIComponent(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURIComponent(myFileGrid.selectedItem["filename"]);
+							xlsUrl = URLUtil.getFullURL(this.parentApplication.url,xlsUrl);
+							System.setClipboard(xlsUrl);
+							Alert.show(resourceManager.getString("jhaij","copySuccessTootip"),resourceManager.getString("jhaij","info"));
+							return;
+						}
+					}
 				}
 				
 				function returnInterceptPath(newCurrentPath:String):void
@@ -174,8 +185,14 @@
 			
 			private var fileReference:FileReference;
 			
+			private var isDownloading:Boolean = false;
+			
 			private function downloadFile():void
 			{
+				if(isDownloading){
+					Alert.show(resourceManager.getString("jhaij","isDownloadingTootip"),resourceManager.getString("jhaij","info"));
+					return;
+				}
 				// TODO Auto Generated method stub 
 				if(myFileGrid.selectedIndex!=-1){
 					
@@ -187,6 +204,7 @@
 						fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
 						fileReference.addEventListener(Event.COMPLETE,fileDownloadCompelete);
 						fileReference.addEventListener(IOErrorEvent.IO_ERROR,ioerrorDownload);
+						fileReference.addEventListener(Event.SELECT,filedownloadselect);
 					}
 					var xlsUrl:String = "download?path="+encodeURIComponent(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURIComponent(myFileGrid.selectedItem["filename"]);
 					xlsUrl = URLUtil.getFullURL(this.parentApplication.url,xlsUrl);
@@ -199,7 +217,9 @@
 				{
 					// TODO Auto-generated method stub
 					trace("下载成功");
-					downloadTootipLabel.text = null;
+					isDownloading = false;
+					downloadTootipLabel.visible = false;
+					stopDownload.visible = false;
 				}
 				
 				function onFileProgress(event:ProgressEvent):void
@@ -211,9 +231,28 @@
 				{
 					// TODO Auto-generated method stub
 					Alert.show(String(event),resourceManager.getString("jhaij","error"));
+					isDownloading = false;
+					downloadTootipLabel.visible = false;
+					stopDownload.visible = false;
 				}
 			}
 			
+			
+			protected function stopDownload_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method
+				fileReference.cancel();
+				isDownloading = false;
+				downloadTootipLabel.visible = false;
+				stopDownload.visible = false;
+			}
+			
+			protected function filedownloadselect(event:Event):void
+			{
+				isDownloading = true;
+				stopDownload.visible = true;
+				downloadTootipLabel.visible = true;
+			}
 			
 		]]>
 	</fx:Script>
@@ -238,9 +277,11 @@
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button4_label')}" itemData="3" ico="@Embed('assets/img/bar_img/remove.png')"/>
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button5_label')}" itemData="4" ico="@Embed('assets/img/bar_img/upload.gif')"/>
 					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button6_label')}" itemData="5" ico="@Embed('assets/img/bar_img/download.gif')"/>
+					<fx:Object label="{resourceManager.getString('jhaij','linkbar_button7_label')}" itemData="6" ico="@Embed('assets/img/bar_img/copy.gif')"/>
 				</s:ArrayCollection>
 			</mx:dataProvider>
 		</mx:LinkBar>
-		<mx:Label id="downloadTootipLabel"/>
+		<mx:Label id="downloadTootipLabel" visible="false"/>
+		<mx:LinkButton id="stopDownload" label="{resourceManager.getString('jhaij','cancel')}" visible="false" click="stopDownload_clickHandler(event)"/>
 	</mx:ControlBar>
 </mx:Panel>
