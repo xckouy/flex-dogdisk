@@ -8,6 +8,7 @@
 		<![CDATA[
 			import com.adobe.cairngorm.control.CairngormEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import com.izerui.cairngorm.event.DeleteFileClassEvent;
 			import com.izerui.cairngorm.event.FomatRootFilePathClassEvent;
 			import com.izerui.cairngorm.event.InterceptPathClassEvent;
 			import com.izerui.cairngorm.event.ListFilesByFolderClassEvent;
@@ -15,6 +16,7 @@
 			import com.izerui.controls.uploader.ServletUploader;
 			import com.izerui.event.FileUploadEvent;
 			import com.izerui.event.I18nEvent;
+			import com.izerui.utils.AlertShow;
 			import com.izerui.vo.FileItem;
 			import com.izerui.vo.FileTree;
 			
@@ -28,6 +30,7 @@
 			import mx.events.ListEvent;
 			import mx.formatters.DateFormatter;
 			import mx.managers.PopUpManager;
+			import mx.utils.URLUtil;
 			
 			private var currentPath:String;
 			
@@ -51,6 +54,8 @@
 				// TODO Auto-generated method stub
 				if(myFileGrid.selectedItem.isfolder){
 					this.loadFiles(myFileGrid.selectedItem.folderpath as String);
+				}else{
+					downloadFile();
 				}
 			}
 			
@@ -99,7 +104,7 @@
 					}
 					case 3:
 					{
-						
+						deleteFiles();
 						break;
 					}
 					case 4:
@@ -115,7 +120,7 @@
 					}
 					case 5:
 					{
-						
+						downloadFile();
 						break;
 					}
 				}
@@ -148,6 +153,68 @@
 				return Number(((item as FileItem).size/1024).toFixed(1)).toString() ;
 			}
 			
+			
+			private function deleteFiles():void
+			{
+				// TODO Auto Generated method stub
+				AlertShow.operateConfirm(resourceManager.getString("jhaij","deleteFilesConfirmTooltipLabel"),resourceManager.getString("jhaij","warn"),FlexGlobals.topLevelApplication,deleteSelectedFilesFunction);
+				
+				function deleteSelectedFilesFunction():void{
+					
+					CairngormEventDispatcher.getInstance().dispatchEvent(new DeleteFileClassEvent(myFileGrid.selectedItems,deleteFileResponse));
+					
+				}
+				
+				function deleteFileResponse():void
+				{
+					loadFiles(currentPath);
+				}
+			}
+			
+			
+			private var fileReference:FileReference;
+			
+			private function downloadFile():void
+			{
+				// TODO Auto Generated method stub 
+				if(myFileGrid.selectedIndex!=-1){
+					
+					if(myFileGrid.selectedItem["isfolder"]){
+						return;
+					}
+					if(!fileReference){
+						fileReference = new FileReference();
+						fileReference.addEventListener(ProgressEvent.PROGRESS, onFileProgress);
+						fileReference.addEventListener(Event.COMPLETE,fileDownloadCompelete);
+						fileReference.addEventListener(IOErrorEvent.IO_ERROR,ioerrorDownload);
+					}
+					var xlsUrl:String = "download?path="+encodeURIComponent(myFileGrid.selectedItem["folderpath"])+"&name="+encodeURIComponent(myFileGrid.selectedItem["filename"]);
+					xlsUrl = URLUtil.getFullURL(this.parentApplication.url,xlsUrl);
+					trace(xlsUrl);
+					var fileUrlRequest:URLRequest = new URLRequest(xlsUrl);
+					fileReference.download(fileUrlRequest,myFileGrid.selectedItem["filename"]);
+				}
+				
+				function fileDownloadCompelete(event:Event):void
+				{
+					// TODO Auto-generated method stub
+					trace("下载成功");
+					downloadTootipLabel.text = null;
+				}
+				
+				function onFileProgress(event:ProgressEvent):void
+				{
+					downloadTootipLabel.text = resourceManager.getString("jhaij","downloadFileTootip")+Number(event.bytesLoaded/1024).toFixed(3) + " of " + Number(event.bytesTotal/1024).toFixed(3) + " bytes";
+				}
+				
+				function ioerrorDownload(event:IOErrorEvent):void
+				{
+					// TODO Auto-generated method stub
+					Alert.show(String(event),resourceManager.getString("jhaij","error"));
+				}
+			}
+			
+			
 		]]>
 	</fx:Script>
 	
@@ -174,5 +241,6 @@
 				</s:ArrayCollection>
 			</mx:dataProvider>
 		</mx:LinkBar>
+		<mx:Label id="downloadTootipLabel"/>
 	</mx:ControlBar>
 </mx:Panel>
