@@ -5,38 +5,31 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.izerui.service.FileService;
 
 @Controller
 public class DownloadController {
-	
-	@Autowired
-	private FileService fileService;
 	
 	private int length = 4096 ;
 	private byte[] array=new byte[length];
 	
 	@RequestMapping(value="/download",method=RequestMethod.GET)
-	public void download(@RequestParam("libcode") Integer libcode,@RequestParam("efiledid") Integer efiledid,@RequestParam("originalFile") boolean originalFile,HttpServletResponse response){
+	public void download(@RequestParam("path") String filepath,@RequestParam("name") String filename,HttpServletResponse response){
 		try {
-			String filepath = null;
-			String filename = null;
+			filepath = new String(filepath.getBytes("ISO-8859-1"),"UTF-8");
+			filepath += new String(filename.getBytes("ISO-8859-1"),"UTF-8");
 			File file = new File(filepath);
 			if(file.isFile()){//存在文件
 				response.reset();  
-				response.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(filename, "UTF-8") + "\"");  
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");  
 				response.addHeader("Content-Length", "" + file.length());  
 				response.setContentType("application/octet-stream;charset=UTF-8");  
 				OutputStream output = response.getOutputStream();
