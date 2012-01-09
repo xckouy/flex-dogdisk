@@ -208,6 +208,7 @@
 						}
 						(fileTree.selectedItem.children as ArrayCollection).addItem(fileTreeVo);
 						fileTree.expandItem(fileTree.selectedItem,true);
+						fileTree.dispatchEvent(new Event("Item_Click"));
 					}
 					
 				}

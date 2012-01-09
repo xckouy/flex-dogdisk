@@ -1,6 +1,7 @@
 package com.izerui.cairngorm.controller
 {
 	import com.adobe.cairngorm.control.FrontController;
+	import com.izerui.cairngorm.commond.DeleteFileClassCommond;
 	import com.izerui.cairngorm.commond.FomatRootFilePathClassCommond;
 	import com.izerui.cairngorm.commond.GetFolderListClassCommond;
 	import com.izerui.cairngorm.commond.InterceptPathClassCommond;
@@ -15,7 +16,8 @@ package com.izerui.cairngorm.controller
 		public static const LISTFILES_BY_FOLDER:String = "LISTFILES_BY_FOLDER";
 		public static const RENAME_FOLDER:String = "RENAME_FOLDER";
 		public static const INTERCEPT_PATH:String = "INTERCEPT_PATH";
-		public static var FOMAT_ROOT_FILEPATH:String = "FOMAT_ROOT_FILEPATH";
+		public static const FOMAT_ROOT_FILEPATH:String = "FOMAT_ROOT_FILEPATH";
+		public static const DELETE_SELECTED_FILES:String = "DELETE_SELECTED_FILES";
 		
 		
 		
@@ -31,6 +33,7 @@ package com.izerui.cairngorm.controller
 			this.addCommand(RENAME_FOLDER,RenameFolderClassCommond);
 			this.addCommand(INTERCEPT_PATH,InterceptPathClassCommond);
 			this.addCommand(FOMAT_ROOT_FILEPATH,FomatRootFilePathClassCommond);
+			this.addCommand(DELETE_SELECTED_FILES,DeleteFileClassCommond);
 		}
 		
 	}
