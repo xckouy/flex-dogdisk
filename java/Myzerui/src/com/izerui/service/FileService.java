@@ -45,4 +45,11 @@ public interface FileService {
 	 * @return
 	 */
 	public String fomatRootFilePath();
+	
+	/**
+	 * 删除多个文件
+	 * @param fileItems
+	 * @return 
+	 */
+	public void deleteFile(List<FileItem> fileItems);
 }

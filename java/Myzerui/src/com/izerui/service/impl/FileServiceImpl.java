@@ -140,13 +140,27 @@ public class FileServiceImpl implements FileService{
 	
 	
 	
-	
-	public static void main(String[] args) {
-		FileServiceImpl imp = new FileServiceImpl();
-//		imp.renameFolder("D:/data/", "data1");
-		String s = "D:/data/djf/ffff/ssjdf/";
-		System.out.println(imp.interceptPath(s));
+	public void deleteFile(List<FileItem> fileItems) {
+		// TODO Auto-generated method stub
+			for (FileItem fileItem : fileItems) {
+				try {
+					if(fileItem.isIsfolder()){
+						File fileFolder = new File(fileItem.getFilename());
+						if(fileFolder.list().length==0){
+							fileFolder.delete();
+						}
+						//以防万一, 不开放该方法
+	//					FileUtils.deleteQuietly(new File(fileItem.getFolderpath()));//删除文件夹 及其下属所有文件/文件夹
+					}else{
+						new File(fileItem.getFolderpath()+fileItem.getFilename()).delete();
+					}
+				} catch (Exception e) {
+					log.error("Folder is not empty");
+//					throw new RuntimeException("Folder is not empty");
+				}
+			}
 	}
+	
 
 
 }
