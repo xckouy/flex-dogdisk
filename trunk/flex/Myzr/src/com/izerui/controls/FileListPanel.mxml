@@ -143,6 +143,11 @@
 //				
 //			}
 			
+			protected function filesize_labelFun(item:Object, column:DataGridColumn):String
+			{
+				return Number(((item as FileItem).size/1024).toFixed(1)).toString() ;
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -152,7 +157,7 @@
 	<mx:DataGrid id="myFileGrid" width="100%" height="100%" allowMultipleSelection="true" itemDoubleClick="myFileGrid_itemDoubleClickHandler(event)" doubleClickEnabled="true">
 		<mx:columns>
 				<mx:DataGridColumn  itemRenderer="com.izerui.controls.itemRender.FolderIconRender" dataField="filename" headerText="{resourceManager.getString('jhaij','filegrid_name_header')}"/>
-				<mx:DataGridColumn width="150"  dataField="size" headerText="{resourceManager.getString('jhaij','filegrid_size_header')}"/>
+				<mx:DataGridColumn width="150"  dataField="size" headerText="{resourceManager.getString('jhaij','filegrid_size_header')}" labelFunction="filesize_labelFun"/>
 				<mx:DataGridColumn width="250"  dataField="lashmodifydate" labelFunction="formatDate" headerText="{resourceManager.getString('jhaij','filegrid_lashmodifydate_header')}"/>
 		</mx:columns>
 	</mx:DataGrid>

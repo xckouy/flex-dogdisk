@@ -3,7 +3,7 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/mx" 
-	title="上传文件"
+	title="{resourceManager.getString('jhaij','uploader_title')}"
 	width="652" height="330"
 	dropShadowEnabled="true"  
 	creationComplete="initApp();"
@@ -36,10 +36,10 @@
 			public var sndChannel:SoundChannel;
 			
 			// Set the File Filters you wish to impose on the applicaton
-			public var allTypes:FileFilter = new FileFilter("所有文件 (*.*)","*.*")
+			public var allTypes:FileFilter = new FileFilter("All Files (*.*)","*.*")
 			public var imageTypes:FileFilter = new FileFilter("Images (*.jpg; *.jpeg; *.gif; *.png)" ,"*.jpg; *.jpeg; *.gif; *.png");
 			public var documentTypes:FileFilter = new FileFilter("Documents (*.pdf), (*.doc), (*.rtf), (*.txt)",("*.pdf; *.doc; *.rtf, *.txt"));
-			public var zipTypes:FileFilter = new FileFilter("zip/rar/7z (*.zip), (*.rar), (*.7z), (*.tar)",("*.zip; *.rar; *.7z, *.tar"));
+			public var zipTypes:FileFilter = new FileFilter("zip/rar/7z Files (*.zip), (*.rar), (*.7z), (*.tar)",("*.zip; *.rar; *.7z, *.tar"));
 			
 			// Place File Filters into the Array that is passed to the MultiFileUpload instance
 			public var filesToFilter:Array = new Array(allTypes,imageTypes,documentTypes,zipTypes);
@@ -93,10 +93,10 @@
 		
 		<mx:Spacer width="100%"/>
 		<mx:HBox>
-			<mx:Button label="浏览文件" id="browseBTN"/>
-			<mx:Button label="传送" id="upload_btn"/>
-			<mx:Button label="移除" id="delButton"/>
-			<mx:Button label="移除全部" id="clearButton"/>
+			<mx:Button label="{resourceManager.getString('jhaij','browseBTN_label')}" id="browseBTN"/>
+			<mx:Button label="{resourceManager.getString('jhaij','upload_btn_label')}" id="upload_btn"/>
+			<mx:Button label="{resourceManager.getString('jhaij','delButton_label')}" id="delButton"/>
+			<mx:Button label="{resourceManager.getString('jhaij','clearButton_label')}" id="clearButton"/>
 		</mx:HBox>
 		
 	</mx:ControlBar>

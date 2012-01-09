@@ -64,6 +64,7 @@ package com.izerui.controls.uploader {
     import mx.controls.ProgressBar;
     import mx.controls.dataGridClasses.*;
     import mx.events.CollectionEvent;
+    import mx.resources.ResourceManager;
 
     
     
@@ -106,6 +107,8 @@ package com.izerui.controls.uploader {
         private var _variables:URLVariables; //variables to passed along to the file upload handler on the server.
         
         //Constructor    
+//        private var continueUploadStatus:Boolean = true;
+		
         public function MultiFileUpload(
         								dataGrid:DataGrid,
         								browseButton:Button,
@@ -166,14 +169,14 @@ package com.izerui.controls.uploader {
 	        _sizeColumn = new DataGridColumn;
 	            
 	        _nameColumn.dataField = "name";
-	        _nameColumn.headerText= "文件";
+	        _nameColumn.headerText= ResourceManager.getInstance().getString("jhaij","filegrid_name_header");
 	        
 	        _typeColumn.dataField = "type";
-	        _typeColumn.headerText = "文件类型";
+	        _typeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_type_header");
 	        _typeColumn.width = 80;
 	        
 	        _sizeColumn.dataField = "size";
-	        _sizeColumn.headerText = "文件大小";
+	        _sizeColumn.headerText = ResourceManager.getInstance().getString("jhaij","filegrid_size_header");
 	        _sizeColumn.labelFunction = bytesToKilobytes as Function;
 	        _sizeColumn.width = 150;
 	        
@@ -215,10 +218,10 @@ package com.izerui.controls.uploader {
                 _file = FileReference(_files.getItemAt(0));    
                 _file.addEventListener(Event.OPEN, openHandler);
                 _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-                _file.addEventListener(Event.COMPLETE, completeHandler);
-//				_file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,successHandler);
+//                _file.addEventListener(Event.COMPLETE, completeHandler);
+				_file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,successHandler);
                 _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
-                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
+//                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
                 _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
 				
                 _file.upload(_uploadURL);
@@ -256,7 +259,7 @@ package com.izerui.controls.uploader {
 		//label function for the datagird File Size Column
         private function bytesToKilobytes(data:Object,blank:Object):String {
             var kilobytes:String;
-            kilobytes = String(Math.round(data.size/ 1024)) + ' kb';
+            kilobytes = String(Math.round(data.size/ 1024));
             return kilobytes
         }
         
@@ -268,7 +271,7 @@ package com.izerui.controls.uploader {
 	            for(i=0;i < _files.length;i++){
 	            _totalbytes +=  _files[i].size;
 	            }
-	        _progressbar.label = "文件总数: "+  _files.length+ " 文件总大小: " + Math.round(_totalbytes/1024) + " kb"
+	        _progressbar.label = ResourceManager.getInstance().getString("jhaij","allfilesnumber")+": "+  _files.length+ " "+ResourceManager.getInstance().getString("jhaij","allfileslength")+": " + Math.round(_totalbytes/1024) + " kb"
         }        
         
         // Checks the files do not exceed maxFileSize | if _maxFileSize == 0 No File Limit Set
@@ -303,7 +306,7 @@ package com.izerui.controls.uploader {
         private function resetForm():void{
             _uploadbutton.enabled = false;
             _uploadbutton.addEventListener(MouseEvent.CLICK,uploadFiles);
-            _uploadbutton.label = "传送";
+            _uploadbutton.label = ResourceManager.getInstance().getString("jhaij","upload_btn_label");
             _progressbar.maximum = 0;
             _totalbytes = 0;
             _progressbar.label = "";
@@ -366,9 +369,9 @@ package com.izerui.controls.uploader {
 	            }	            
 	            if (dl.length > 0){
 	            	for (i=0;i<dl.length;i++){
-	            	msg += String(dl[i].name + " 太大. \n");
+	            	msg += String(dl[i].name + " "+ResourceManager.getInstance().getString("jhaij","tooLarge")+". \n");
 	            	}
-	            	mx.controls.Alert.show(msg + "最大文件大小为: " + Math.round(_maxFileSize / 1024) + " kb","文件过大",4,null).clipContent;
+	            	mx.controls.Alert.show(msg + ResourceManager.getInstance().getString("jhaij","Maximum_file_size")+": " + Math.round(_maxFileSize / 1024) + " kb",ResourceManager.getInstance().getString("jhaij","tooLarge"),4,null).clipContent;
 	            }        
         }        
         
@@ -382,42 +385,52 @@ package com.izerui.controls.uploader {
         private function progressHandler(event:ProgressEvent):void {        
             _progressbar.setProgress(event.bytesLoaded,event.bytesTotal);
 			if(event.bytesLoaded == event.bytesTotal){
-				_progressbar.label = "正保存到数据库中,请稍等...";
+				_progressbar.label = ResourceManager.getInstance().getString("jhaij","progressbar_label");
 			}else{
-	            _progressbar.label = "已传送 " + Math.round(event.bytesLoaded / 1024) + " kb 的 " + Math.round(event.bytesTotal / 1024) + " kb " + (_files.length - 1) + " 个文件剩余";
+	            _progressbar.label = ResourceManager.getInstance().getString("jhaij","haveUploadTootip")+" " + Math.round(event.bytesLoaded / 1024) + " kb "+ResourceManager.getInstance().getString("jhaij","of")+" " + Math.round(event.bytesTotal / 1024) + " kb " + (_files.length - 1) + " "+ResourceManager.getInstance().getString("jhaij","remaining_files");
 			}
         }
 
         // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
-        private function completeHandler(event:Event):void{
-            //trace('completeHanderl triggered');
-            _files.removeItemAt(0);
-            if (_files.length > 0){
-            	_totalbytes = 0;
-				dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
-                uploadFiles(null);
-            }else{
-                setupCancelButton(false);
-                 _progressbar.label = "传送完毕";
-                 var uploadCompleted:Event = new Event(Event.COMPLETE);
-                dispatchEvent(uploadCompleted);
-            }
-        }   
+//        private function completeHandler(event:Event):void{
+//            //trace('completeHanderl triggered');
+//            _files.removeItemAt(0);
+//            if (_files.length > 0){
+//            	_totalbytes = 0;
+//				dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
+//                uploadFiles(null);
+//            }else{
+//                setupCancelButton(false);
+//                 _progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
+//                 var uploadCompleted:Event = new Event(Event.COMPLETE);
+//                dispatchEvent(uploadCompleted);
+//            }
+//        }
 		
-//		private function successHandler(event:DataEvent):void{
-//			if(event&&event.data){
-//				trace(event.data);
-//				var singleUploadSuccess:DataEvent = new DataEvent(DataEvent.UPLOAD_COMPLETE_DATA);
-//				singleUploadSuccess.data = event.data;
-//				dispatchEvent(singleUploadSuccess);
-//			}
-//			
-//		}
+        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
+		private function successHandler(event:DataEvent):void{
+			if(event&&event.data&&event.data == "success"){ //服务器必须返回一个输出信息,否则不会继续下一个,出错可以不返回信息
+				//trace('completeHanderl triggered');
+				_files.removeItemAt(0);
+				if (_files.length > 0){
+					_totalbytes = 0;
+					dispatchEvent(new FileUploadEvent(FileUploadEvent.UPLOAD_SINGLE_FILE_COMPLETE));
+					uploadFiles(null);//继续上传下一个文件
+				}else{ // 全部上传完毕触发完成事件
+					setupCancelButton(false);
+					_progressbar.label = ResourceManager.getInstance().getString("jhaij","uploadComplete");
+					var uploadCompleted:Event = new Event(Event.COMPLETE);
+					dispatchEvent(uploadCompleted);
+				}
+			}
+			
+		}
           
         // only called if there is an  error detected by flash player browsing or uploading a file   
         private function ioErrorHandler(event:IOErrorEvent):void{
             //trace('And IO Error has occured:' +  event);
-            mx.controls.Alert.show(String(event),"ioError",0);
+			Alert.show(ResourceManager.getInstance().getString("jhaij","uploadErrorTootip"),ResourceManager.getInstance().getString("jhaij","error"));
+//			mx.controls.Alert.show(String(event),"ioError",0);
         }    
         // only called if a security error detected by flash player such as a sandbox violation
         private function securityErrorHandler(event:SecurityErrorEvent):void{
