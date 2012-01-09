@@ -27,5 +27,10 @@
 			<type>2</type>
 			<location>E:/workspace/work6/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Myzerui</location>
 		</link>
+		<link>
+			<name>bin-release</name>
+			<type>2</type>
+			<location>C:/Users/Administrator/Desktop/ddd</location>
+		</link>
 	</linkedResources>
 </projectDescription>

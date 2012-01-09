@@ -213,6 +213,21 @@
 					fileReference.download(fileUrlRequest,myFileGrid.selectedItem["filename"]);
 				}
 				
+				//开始下载
+				function filedownloadselect(event:Event):void
+				{
+					isDownloading = true;
+					stopDownload.visible = true;
+					downloadTootipLabel.visible = true;
+				}
+				
+				//下载过程
+				function onFileProgress(event:ProgressEvent):void
+				{
+					downloadTootipLabel.text = resourceManager.getString("jhaij","downloadFileTootip")+Number(event.bytesLoaded/1024).toFixed(3) + " of " + Number(event.bytesTotal/1024).toFixed(3) + " bytes";
+				}
+				
+				//下载成功
 				function fileDownloadCompelete(event:Event):void
 				{
 					// TODO Auto-generated method stub
@@ -222,11 +237,7 @@
 					stopDownload.visible = false;
 				}
 				
-				function onFileProgress(event:ProgressEvent):void
-				{
-					downloadTootipLabel.text = resourceManager.getString("jhaij","downloadFileTootip")+Number(event.bytesLoaded/1024).toFixed(3) + " of " + Number(event.bytesTotal/1024).toFixed(3) + " bytes";
-				}
-				
+				//下载失败
 				function ioerrorDownload(event:IOErrorEvent):void
 				{
 					// TODO Auto-generated method stub
@@ -247,12 +258,6 @@
 				stopDownload.visible = false;
 			}
 			
-			protected function filedownloadselect(event:Event):void
-			{
-				isDownloading = true;
-				stopDownload.visible = true;
-				downloadTootipLabel.visible = true;
-			}
 			
 		]]>
 	</fx:Script>
