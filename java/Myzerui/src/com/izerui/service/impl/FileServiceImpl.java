@@ -84,7 +84,7 @@ public class FileServiceImpl implements FileService{
 			fi.setLashmodifydate(new Date(file.lastModified()));
 			if(file.isDirectory()){
 				fi.setIsfolder(true);
-				fi.setSize(FileUtils.sizeOfDirectory(file)/1024f);
+				fi.setSize(FileUtils.sizeOfDirectory(file));
 				fi.setFilename(ExtendFilenameUtils.getLastFolderPathNoEndSeparator(file.getPath()+File.separator));
 				fi.setFolderpath(ExtendFilenameUtils.getFullPath(file.getPath()+File.separator));
 			}else{
@@ -94,7 +94,7 @@ public class FileServiceImpl implements FileService{
 				fi.setExtension(ExtendFilenameUtils.getExtension(file.getName()));
 				fi.setIshidden(file.isHidden());
 				fi.setFilename(file.getName());
-				fi.setSize(file.length()/1024f);
+				fi.setSize(file.length());
 			}
 			files.add(fi);
 			log.info(file.getName());

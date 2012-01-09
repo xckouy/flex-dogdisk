@@ -62,7 +62,7 @@ public class UploadServlet extends HttpServlet {
 					fileItem.write(new File(tempFilePath+tempFilename));
 				}else if(fileItem.getFieldName().equals("serverpath")){ //获取服务器要保存的路径
 					serverpath = new String(fileItem.get(),"UTF-8");
-				}else if(fileItem.getFieldName().equals("Filename")){ //获取服务器要保存的路径
+				}else if(fileItem.getFieldName().equals("Filename")){ //获取文件实际名字
 					filename = new String(fileItem.get(),"UTF-8");
 				}
 			}
@@ -70,11 +70,12 @@ public class UploadServlet extends HttpServlet {
 			FileUtils.moveFile(new File(tempFilePath+tempFilename), new File(serverpath+filename));
 			response.getWriter().write("success");
 			
-			
 		} catch (FileUploadException e) {
 			log.error(e.getMessage());
+			throw new IOException();
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			throw new IOException();
 		}
 	}
 	
