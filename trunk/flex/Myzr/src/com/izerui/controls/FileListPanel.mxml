@@ -13,6 +13,7 @@
 			import com.izerui.cairngorm.event.InterceptPathClassEvent;
 			import com.izerui.cairngorm.event.ListFilesByFolderClassEvent;
 			import com.izerui.components.loading.LoaderManager;
+			import com.izerui.controls.fileviwers.player.FlvPlayer;
 			import com.izerui.controls.uploader.ServletUploader;
 			import com.izerui.event.FileUploadEvent;
 			import com.izerui.event.I18nEvent;
@@ -55,7 +56,16 @@
 				if(myFileGrid.selectedItem.isfolder){
 					this.loadFiles(myFileGrid.selectedItem.folderpath as String);
 				}else{
-					downloadFile();
+//					downloadFile();
+					
+					var flvPlayer:FlvPlayer = new FlvPlayer();
+					flvPlayer.file = myFileGrid.selectedItem as FileItem;
+					
+					PopUpManager.addPopUp(flvPlayer,parentApplication as Index,true);
+					PopUpManager.centerPopUp(flvPlayer);
+					flvPlayer.setFocus();
+					
+					
 				}
 			}
 			
