@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.commons.io.*;
+
+import com.izerui.utils.VideoMimeTypes;
 
 @Controller
 public class DownloadController {
@@ -38,6 +41,30 @@ public class DownloadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}  
+	}
+	
+	
+	@RequestMapping(value = "/getVideoFile", method = RequestMethod.GET)
+	public void getVideoFile(@RequestParam("flvfile") String flvfile, HttpServletResponse response) {
+		try {
+			flvfile = new String(flvfile.getBytes("ISO-8859-1"),"GBK");
+			String filename = null;
+			Long filelength = 0l;
+			File file = null;
+			file = new File(flvfile);
+			filename = file.getName();
+			filelength = file.length();
+			response.reset();
+			response.setContentType(VideoMimeTypes.getVideoMimeTypes(
+					FilenameUtils.getExtension(filename)).getMine());
+			response.setContentLength(filelength.intValue());
+			response.setHeader("Content-Disposition", "inline; filename="
+					+ filename);
+			OutputStream output = response.getOutputStream();
+			outputFileStream(flvfile, output);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void outputFileStream(String filePath, OutputStream output)
