@@ -23,7 +23,6 @@
 
 				<h2>Details</h2>
 				<p>所访问的地址不存在, 请确认输入的地址是否正确, 如果仍然存在问题, 请与管理员联系。</p>
-				<p style="MARGIN-TOP: 24px"><a href="/DTInterface">返回</a></p>
 			</div>
 		</form>
 	</body>
